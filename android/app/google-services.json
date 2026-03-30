@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "284584943565",
+    "project_id": "nm-dress",
+    "storage_bucket": "nm-dress.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:284584943565:android:80be43ea1224e31ed5ee84",
+        "android_client_info": {
+          "package_name": "com.nmdresshatay.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "284584943565-lcgdmpd4o2008b902oj14k2s9lp0vpt8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgjoUcbAHR4eu4LyryWACGjKmol_hhab8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "284584943565-lcgdmpd4o2008b902oj14k2s9lp0vpt8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "284584943565-09trtihikrdr9v3vftpq6otjejk7o0un.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.nmDress"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
