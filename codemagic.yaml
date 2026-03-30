@@ -35,10 +35,19 @@ workflows:
       - name: Fix iOS deployment target
         script: |
           sed -i '' \
-            's/IPHONEOS_DEPLOYMENT_TARGET = 13\.0/IPHONEOS_DEPLOYMENT_TARGET = 14.0/g' \
+            's/IPHONEOS_DEPLOYMENT_TARGET = 13\.0/IPHONEOS_DEPLOYMENT_TARGET = 16.0/g' \
+            ios/Runner.xcodeproj/project.pbxproj
+          sed -i '' \
+            's/IPHONEOS_DEPLOYMENT_TARGET = 14\.0/IPHONEOS_DEPLOYMENT_TARGET = 16.0/g' \
             ios/Runner.xcodeproj/project.pbxproj
           echo "Deployment targets after fix:"
           grep "IPHONEOS_DEPLOYMENT_TARGET" ios/Runner.xcodeproj/project.pbxproj
+      - name: Check storyboard files
+        script: |
+          echo "Base.lproj contents:"
+          ls -la ios/Runner/Base.lproj/ || echo "Base.lproj not found!"
+          echo "Runner folder contents:"
+          ls -la ios/Runner/
       - name: Pod install
         script: |
           cd ios
@@ -55,16 +64,8 @@ workflows:
           xcode-project use-profiles
           xcode-project build-ipa \
             --workspace "$XCODE_WORKSPACE" \
-            --scheme "$XCODE_SCHEME"
-      - name: Upload to TestFlight
-        script: |
-          echo "$APP_STORE_CONNECT_PRIVATE_KEY" > /tmp/authkey.p8
-          app-store-connect publish \
-            --path $(find build/ios/ipa -name "*.ipa") \
-            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
-            --private-key @file:/tmp/authkey.p8
-          rm /tmp/authkey.p8
+            --scheme "$XCODE_SCHEME" \
+            --verbose
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
