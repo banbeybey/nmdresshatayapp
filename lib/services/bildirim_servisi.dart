@@ -28,60 +28,65 @@ class BildirimServisi {
 
   /// main() içinde bir kez çağır
   static Future<void> baslat() async {
-    // 1) İzin iste
-    final ayarlar = await _fcm.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-    debugPrint('[FCM] İzin: ${ayarlar.authorizationStatus}');
-
-    // 2) Android kanalı oluştur
-    await _localNotif
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(_kanal);
-
-    // 3) flutter_local_notifications başlat
-    const initSettings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      iOS: DarwinInitializationSettings(),
-    );
-    await _localNotif.initialize(initSettings);
-
-    // 4) iOS foreground seçenekleri
-    await _fcm.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    // 5) Arka plan handler
-    FirebaseMessaging.onBackgroundMessage(fcmBackgroundHandler);
-
-    // 6) Foreground bildirimini local notifications ile göster (Android için şart)
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint('[FCM Ön Plan] ${message.notification?.title}');
-      final bildirim = message.notification;
-      if (bildirim == null) return;
-
-      _localNotif.show(
-        bildirim.hashCode,
-        bildirim.title,
-        bildirim.body,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            _kanal.id,
-            _kanal.name,
-            channelDescription: _kanal.description,
-            importance: Importance.max,
-            priority: Priority.high,
-            icon: '@mipmap/ic_launcher',
-          ),
-          iOS: const DarwinNotificationDetails(),
-        ),
+    try {
+      // 1) İzin iste
+      final ayarlar = await _fcm.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
       );
-    });
+      debugPrint('[FCM] İzin: ${ayarlar.authorizationStatus}');
+
+      // 2) Android kanalı oluştur
+      await _localNotif
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(_kanal);
+
+      // 3) flutter_local_notifications başlat
+      const initSettings = InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        iOS: DarwinInitializationSettings(),
+      );
+      await _localNotif.initialize(initSettings);
+
+      // 4) iOS foreground seçenekleri
+      await _fcm.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+
+      // 5) Arka plan handler
+      FirebaseMessaging.onBackgroundMessage(fcmBackgroundHandler);
+
+      // 6) Foreground bildirimini local notifications ile göster (Android için şart)
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        debugPrint('[FCM Ön Plan] ${message.notification?.title}');
+        final bildirim = message.notification;
+        if (bildirim == null) return;
+
+        _localNotif.show(
+          bildirim.hashCode,
+          bildirim.title,
+          bildirim.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              _kanal.id,
+              _kanal.name,
+              channelDescription: _kanal.description,
+              importance: Importance.max,
+              priority: Priority.high,
+              icon: '@mipmap/ic_launcher',
+            ),
+            iOS: const DarwinNotificationDetails(),
+          ),
+        );
+      });
+    } catch (e) {
+      // Bildirim servisi çalışmasa bile uygulama açılmaya devam eder
+      debugPrint('[FCM] Bildirim servisi başlatılamadı: $e');
+    }
   }
 
   /// FCM V1 API üzerinden push gönder (Cloud Function çağırır)
