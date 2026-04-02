@@ -9,10 +9,34 @@ import 'screens/splash_screen.dart';
 import 'services/bildirim_servisi.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await BildirimServisi.baslat(); // FCM izni + local notifications başlatma
-  runApp(const NMDressApp());
+  FlutterError.onError = (FlutterErrorDetails details) {
+    debugPrint('🔴 FLUTTER HATA: ${details.exception}');
+    debugPrint('🔴 STACK: ${details.stack}');
+    FlutterError.presentError(details);
+  };
+
+  await runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    try {
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      debugPrint('✅ Firebase başlatıldı');
+    } catch (e) {
+      debugPrint('🔴 Firebase başlatma hatası: $e');
+    }
+
+    try {
+      await BildirimServisi.baslat();
+      debugPrint('✅ BildirimServisi başlatıldı');
+    } catch (e) {
+      debugPrint('🔴 BildirimServisi hatası: $e');
+    }
+
+    runApp(const NMDressApp());
+  }, (error, stack) {
+    debugPrint('🔴 ZONE HATA: $error');
+    debugPrint('🔴 STACK: $stack');
+  });
 }
 
 class NMDressApp extends StatelessWidget {
