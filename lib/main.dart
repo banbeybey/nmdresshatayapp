@@ -11,7 +11,7 @@ import 'services/bildirim_servisi.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await BildirimServisi.baslat(); // FCM izni + local notifications başlatma
+  BildirimServisi.baslat(); // await kaldırıldı — arka planda çalışır
   runApp(const NMDressApp());
 }
 
