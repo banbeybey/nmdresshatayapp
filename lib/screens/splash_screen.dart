@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'ana_sayfa.dart';
+import '../services/bildirim_servisi.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -131,6 +132,12 @@ class _SplashScreenState extends State<SplashScreen>
     _merveSlide = Tween<Offset>(begin: const Offset(0.3, 0), end: Offset.zero)
         .animate(CurvedAnimation(parent: _merveCtrl, curve: Curves.easeOutCubic));
     Future.delayed(const Duration(milliseconds: 1500), () { if (mounted) _merveCtrl.forward(); });
+
+    // Splash ekranı render edildikten 1.5sn sonra bildirim izni iste.
+    // Böylece iOS'ta dialog açılırken arka plan siyah değil, pembe splash görünür.
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      if (mounted) BildirimServisi.baslat();
+    });
 
     _navigate();
   }
