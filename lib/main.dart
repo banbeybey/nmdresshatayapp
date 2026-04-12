@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'services/cache_manager.dart';
-import 'services/cache_manager.dart';
 import 'firebase_options.dart';
 import 'providers/sepet_provider.dart';
 import 'providers/kullanici_provider.dart';
@@ -30,15 +27,6 @@ void main() async {
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
   ));
-
-  // Flutter bellek cache — 150 görsel, 100MB
-  PaintingBinding.instance.imageCache.maximumSize      = 150;
-  PaintingBinding.instance.imageCache.maximumSizeBytes = 100 << 20; // 100MB
-
-  // Disk cache başlat — singleton'lar ilk erişimde oluşturulur
-  // Ürün görselleri: 7 gün | Mağaza logoları: 30 gün
-  ProductImageCacheManager();
-  StoreLogoCacheManager();
 
   runApp(const HataySepetimApp());
 
