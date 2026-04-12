@@ -65,7 +65,7 @@ class DefaultFirebaseOptions {
     projectId: 'nm-dress',
     storageBucket: 'nm-dress.firebasestorage.app',
     iosClientId: '284584943565-09trtihikrdr9v3vftpq6otjejk7o0un.apps.googleusercontent.com',
-    iosBundleId: 'com.example.nmDress',
+    iosBundleId: 'com.nmdresshatay.app',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -75,7 +75,7 @@ class DefaultFirebaseOptions {
     projectId: 'nm-dress',
     storageBucket: 'nm-dress.firebasestorage.app',
     iosClientId: '284584943565-09trtihikrdr9v3vftpq6otjejk7o0un.apps.googleusercontent.com',
-    iosBundleId: 'com.example.nmDress',
+    iosBundleId: 'com.nmdresshatay.app',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
