@@ -1,96 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'providers/sepet_provider.dart';
 import 'providers/kullanici_provider.dart';
-import 'providers/kurumsal_provider.dart';
+import 'providers/urun_provider.dart';
 import 'screens/splash_screen.dart';
-import 'screens/magazalar_screen.dart' show magazalarRouteObserver;
-import 'services/siparis_bildirim_servisi.dart';
-import 'services/pasta_siparis_servisi.dart';
+import 'services/bildirim_servisi.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } catch (e) {
-    debugPrint('Firebase hatası: $e');
-  }
-
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.dark,
-  ));
-
-  runApp(const HataySepetimApp());
-
-  try {
-    await SiparisBildirimServisi.instance.init();
-  } catch (e) {
-    debugPrint('Bildirim servisi hatası: $e');
-  }
-
-  try {
-    await PastaSiparisServisi.sessionYukle();
-  } catch (e) {
-    debugPrint('Pasta session yükleme hatası: $e');
-  }
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await BildirimServisi.baslat(); // FCM izni + local notifications başlatma
+  runApp(const NMDressApp());
 }
 
-class HataySepetimApp extends StatelessWidget {
-  const HataySepetimApp({super.key});
+class NMDressApp extends StatelessWidget {
+  const NMDressApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => SepetProvider()),
         ChangeNotifierProvider(create: (_) => KullaniciProvider()),
-        ChangeNotifierProvider(create: (_) => KurumsalProvider()),
+        ChangeNotifierProvider(create: (_) => SepetProvider()),
+        ChangeNotifierProvider(create: (_) => UrunProvider()),
       ],
       child: MaterialApp(
-        title: 'HataySepetim',
+        title: 'NM Dress',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFFFF8C00),
-            primary: const Color(0xFFFF8C00),
+            seedColor: const Color(0xFF8B1A4A),
           ),
-          fontFamily: 'SF Pro Display',
-          useMaterial3: true,
-          scaffoldBackgroundColor: const Color(0xFFF8F8F8),
+          scaffoldBackgroundColor: const Color(0xFFF8F4F6),
           appBarTheme: const AppBarTheme(
             backgroundColor: Colors.white,
+            foregroundColor: Color(0xFF1A1A1A),
             elevation: 0,
             centerTitle: true,
-            iconTheme: IconThemeData(color: Color(0xFF1D1D1F)),
             titleTextStyle: TextStyle(
-              color: Color(0xFF1D1D1F),
+              color: Color(0xFF1A1A1A),
               fontSize: 18,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF8C00),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14)),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              textStyle: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
+          useMaterial3: true,
         ),
-        navigatorObservers: [magazalarRouteObserver],
         home: const SplashScreen(),
       ),
     );
