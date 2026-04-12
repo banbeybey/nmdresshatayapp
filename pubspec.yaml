@@ -1,8 +1,8 @@
 name: nm_dress
-description: "A new Flutter project."
+description: "NM Dress Abiye HATAY"
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.2.0+1
 
 environment:
   sdk: ^3.11.0
