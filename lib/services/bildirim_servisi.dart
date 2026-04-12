@@ -26,41 +26,39 @@ class BildirimServisi {
 
   static final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
-  /// main() içinde bir kez çağır
+  /// Splash screen içinde çağır (Flutter render ettikten sonra)
   static Future<void> baslat() async {
     try {
-      // 1) İzin iste
-      final ayarlar = await _fcm.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-      debugPrint('[FCM] İzin: ${ayarlar.authorizationStatus}');
-
-      // 2) Android kanalı oluştur
+      // 1) Android kanalı oluştur
       await _localNotif
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.createNotificationChannel(_kanal);
 
-      // 3) flutter_local_notifications başlat
+      // 2) flutter_local_notifications başlat
+      //    iOS'ta requestAlertPermission/Sound/Badge FALSE — izni FCM yönetiyor.
+      //    Bu sayede flutter_local_notifications kendi izin dialogunu AÇMAZ.
       const initSettings = InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-        iOS: DarwinInitializationSettings(),
+        iOS: DarwinInitializationSettings(
+          requestAlertPermission: false,
+          requestSoundPermission: false,
+          requestBadgePermission: false,
+        ),
       );
       await _localNotif.initialize(initSettings);
 
-      // 4) iOS foreground seçenekleri
+      // 3) iOS foreground seçenekleri
       await _fcm.setForegroundNotificationPresentationOptions(
         alert: true,
         badge: true,
         sound: true,
       );
 
-      // 5) Arka plan handler
+      // 4) Arka plan handler
       FirebaseMessaging.onBackgroundMessage(fcmBackgroundHandler);
 
-      // 6) Foreground bildirimini local notifications ile göster (Android için şart)
+      // 5) Foreground bildirimini local notifications ile göster (Android için şart)
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         debugPrint('[FCM Ön Plan] ${message.notification?.title}');
         final bildirim = message.notification;
@@ -83,8 +81,15 @@ class BildirimServisi {
           ),
         );
       });
+
+      // 6) İzin iste — EN SONA bırakıldı, her şey hazır olduktan sonra
+      final ayarlar = await _fcm.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      debugPrint('[FCM] İzin: ${ayarlar.authorizationStatus}');
     } catch (e) {
-      // Bildirim servisi çalışmasa bile uygulama açılmaya devam eder
       debugPrint('[FCM] Bildirim servisi başlatılamadı: $e');
     }
   }
