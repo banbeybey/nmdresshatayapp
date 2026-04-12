@@ -6,12 +6,11 @@ import 'providers/sepet_provider.dart';
 import 'providers/kullanici_provider.dart';
 import 'providers/urun_provider.dart';
 import 'screens/splash_screen.dart';
-import 'services/bildirim_servisi.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  BildirimServisi.baslat(); // await kaldırıldı — arka planda çalışır
+  // BildirimServisi artık splash_screen.dart içinde çağrılıyor
   runApp(const NMDressApp());
 }
 
