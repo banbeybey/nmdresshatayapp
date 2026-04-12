@@ -9,9 +9,29 @@ import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Firebase başlamadan önce pembe ekran göster — siyah ekran olmaz
+  runApp(const _BaslangicEkrani());
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // BildirimServisi artık splash_screen.dart içinde çağrılıyor
+
+  // Firebase hazır, gerçek uygulamayı başlat
   runApp(const NMDressApp());
+}
+
+/// Firebase yüklenirken gösterilen sade pembe ekran
+class _BaslangicEkrani extends StatelessWidget {
+  const _BaslangicEkrani();
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Color(0xFFF08090),
+      ),
+    );
+  }
 }
 
 class NMDressApp extends StatelessWidget {
