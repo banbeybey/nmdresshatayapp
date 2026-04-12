@@ -133,10 +133,13 @@ class _SplashScreenState extends State<SplashScreen>
         .animate(CurvedAnimation(parent: _merveCtrl, curve: Curves.easeOutCubic));
     Future.delayed(const Duration(milliseconds: 1500), () { if (mounted) _merveCtrl.forward(); });
 
-    // Splash ekranı render edildikten 1.5sn sonra bildirim izni iste.
-    // Böylece iOS'ta dialog açılırken arka plan siyah değil, pembe splash görünür.
-    Future.delayed(const Duration(milliseconds: 1500), () {
-      if (mounted) BildirimServisi.baslat();
+    // İlk frame render edildikten sonra 2sn bekle, sonra bildirim izni iste.
+    // addPostFrameCallback: Flutter'ın gerçekten çizdiğini garanti eder.
+    // Böylece iOS'ta dialog açılırken arka plan kesinlikle pembe splash görünür.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 2000), () {
+        if (mounted) BildirimServisi.baslat();
+      });
     });
 
     _navigate();
